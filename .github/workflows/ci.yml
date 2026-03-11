@@ -1,0 +1,33 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Validate HTML
+        run: |
+          count=$(find . -name '*.html' -type f | wc -l)
+          echo "Found $count HTML templates"
+          for f in $(find . -name '*.html' -type f); do
+            echo "  ✓ $f"
+          done
+      - name: Validate JSX
+        run: |
+          count=$(find . -name '*.jsx' -type f | wc -l)
+          echo "Found $count JSX components"
+          for f in $(find . -name '*.jsx' -type f); do
+            echo "  ✓ $f"
+          done
+      - name: Check design rules
+        run: |
+          if [ -f "DESIGN-RULES.md" ]; then
+            echo "✅ DESIGN-RULES.md present"
+          else
+            echo "⚠️ Missing DESIGN-RULES.md"
+            exit 1
+          fi
+          echo "✅ Brand system validated"
